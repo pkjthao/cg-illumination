@@ -9,8 +9,8 @@ in vec2 uv;
 // Uniforms
 // projection 3D to 2D
 uniform mat4 world;
-uniform mat4 view;
-uniform mat4 projection;
+uniform mat4 view; // view matrix moves the camera 
+uniform mat4 projection; // moves the far plane to -1 for nice clipping
 // material
 uniform vec2 texture_scale;
 

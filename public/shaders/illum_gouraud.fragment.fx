@@ -9,16 +9,33 @@ in vec3 specular_illum;
 // Uniforms
 // material
 uniform vec3 mat_color;
-uniform vec3 mat_specular;
+uniform vec3 mat_specular; // K_s
 uniform sampler2D mat_texture;
 // light from environment
 uniform vec3 ambient; // Ia
+
+// lights
+uniform int num_lights;
+uniform vec3 light_positions[8];
+uniform vec3 light_colors[8]; // Ip
 
 // Output
 out vec4 FragColor;
 
 void main() {
-    vec3 model_color = mat_color * texture(mat_texture, model_uv).rgb;
-    // Color
-    FragColor = vec4(model_color, 1.0);
-}
+    // contains your both K_a and K_d which are the same in the ambient
+    // and diffuse light calculations
+
+        // Add the ambient, diffuse, specular light
+        vec3 model_color = mat_color * texture(mat_texture, model_uv).rgb;
+
+        vec3 ambient_illum = ambient * model_color;
+        // create vector 4 for each illumination type
+        vec4 ambient_illumination = vec4(ambient_illum, 1.0);
+        vec4 diffuse_illumination = vec4(diffuse_illum * model_color, 1.0);
+        vec4 specular_illumination = vec4(specular_illum * mat_specular, 1.0);
+
+        // Color
+        FragColor = min(vec4(1.0, 1.0, 1.0, 1.0), ambient_illumination + diffuse_illumination + specular_illumination);
+        // add the ambient light diffuse light and specular light together
+    }
