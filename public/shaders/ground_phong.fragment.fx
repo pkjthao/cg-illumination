@@ -24,6 +24,25 @@ uniform vec3 light_colors[8]; // Ip
 out vec4 FragColor;
 
 void main() {
-    // Color
-    FragColor = vec4(mat_color * texture(mat_texture, model_uv).rgb, 1.0);
+    // take lines of codes out the loop that don't need loop
+    for (int i=0; i<num_lights; i++) {
+        // ambient lighting intensity
+        vec3 I_ambient = ambient * mat_color;
+
+        // diffuse lighting intensity
+        vec3 normalized_surface_normal = normalize(model_normal);
+        vec3 normalized_light_direction = normalize(light_positions[i] - model_position);
+        vec3 I_diffuse = light_colors[i] * mat_color * dot(normalized_surface_normal, normalized_light_direction);
+
+        // specular lighting intensity
+        vec3 normalized_reflected_light_direction = normalize(2.0 * dot(normalized_surface_normal, normalized_light_direction) * normalized_surface_normal - normalized_light_direction);
+        vec3 normalized_view_direction = normalize(camera_position - model_position);
+        vec3 I_specular = light_colors[i] * mat_specular * pow(dot(normalized_reflected_light_direction, normalized_view_direction), mat_shininess);
+        
+        // combined
+        vec3 combined = I_ambient + I_diffuse + I_specular;
+
+        // Color
+        FragColor = vec4(combined, 1.0);
+    }
 }
