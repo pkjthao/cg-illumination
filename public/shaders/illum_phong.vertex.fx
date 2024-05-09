@@ -1,7 +1,7 @@
 #version 300 es
 precision highp float;
 
-// Attributes
+// Attributes (model space values are assigned)
 in vec3 position;
 in vec3 normal;
 in vec2 uv;
@@ -14,16 +14,19 @@ uniform mat4 projection; // moves the far plane to -1 for nice clipping
 // material
 uniform vec2 texture_scale;
 
-// Output
+// Output (world space values should be assigned)
 out vec3 model_position;
 out vec3 model_normal;
 out vec2 model_uv;
 
 void main() {
     // Pass vertex position onto the fragment shader
-    model_position = position;
+    model_position = vec3(world * vec4(position, 1.0));
+
     // Pass vertex normal onto the fragment shader
-    model_normal = normal;
+    mat3 matNormalTransform = inverse(transpose(mat3(world)));
+    model_normal = matNormalTransform * normal;
+
     // Pass vertex texcoord onto the fragment shader
     model_uv = uv;
 

@@ -38,4 +38,4 @@ void main() {
         // Color
         FragColor = min(vec4(1.0, 1.0, 1.0, 1.0), ambient_illumination + diffuse_illumination + specular_illumination);
         // add the ambient light diffuse light and specular light together
-    }
+}

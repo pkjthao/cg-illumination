@@ -24,23 +24,28 @@ uniform vec3 light_colors[8]; // Ip
 out vec4 FragColor;
 
 void main() {
-    // ambient lighting intensity
+    // take lines of codes out the loop that don't need loop
     vec3 I_ambient = ambient * mat_color;
+    vec3 I_diffuse = vec3(0.0);
+    vec3 I_specular = vec3(0.0);
 
-    // diffuse lighting intensity
-    vec3 normalized_surface_normal = noramlize(model_normal);
-    vec3 normalized_light_direction = normalize(light_positions[0] - model_position);
-    vec3 I_diffuse = light_colors[0] * mat_color * dot(normalized_surface_normal, normalized_light_direction);
+    for (int i=0; i<num_lights; i++) {
 
-    // specular lighting intensity
-    vec3 normalized_reflected_light_direction = normalize(2 * dot(normalized_surface_normal, normalized_light_direction) * normalized_surface_normal - normalized_light_direction);
-    vec3 normalized_view_direction = noramlize(camera_position - model_position);
-    vec3 I_specular = light_colors[0] * mat_specular * pow(dot(normalized_reflected_light_direction, normalized_view_direction), mat_shininess);
-    
+        // diffuse lighting intensity
+        vec3 normalized_surface_normal = normalize(model_normal);
+        vec3 normalized_light_direction = normalize(light_positions[i] - model_position);
+        I_diffuse += light_colors[i] * mat_color * dot(normalized_surface_normal, normalized_light_direction);
+
+        // specular lighting intensity
+        vec3 normalized_reflected_light_direction = normalize(2.0 * max(dot(normalized_surface_normal, normalized_light_direction), 0.0) * normalized_surface_normal - normalized_light_direction);
+        vec3 normalized_view_direction = normalize(camera_position - model_position);
+        I_specular += light_colors[i] * mat_specular * pow(max(dot(normalized_reflected_light_direction, normalized_view_direction), 0.0), mat_shininess);
+        
+        
+    }
     // combined
-    vec3 combined = I_ambient + I_diffuse + I_specular;
+        vec3 combined = I_ambient + I_diffuse + I_specular;
 
-    // Color
-    FragColor = vec4(combined, 1.0);
-    //FragColor = vec4(mat_color * texture(mat_texture, model_uv).rgb, 1.0);
+        // Color
+        FragColor = vec4(combined, 1.0);
 }
