@@ -61,6 +61,24 @@ class Renderer {
             scene.ground_mesh = ground_mesh_callback(scene.scene, scene.ground_subdivisions);
             this['createScene'+ idx](idx);
         });
+
+        window.addEventListener("keypress", a => {
+            if (String.fromCharCode(a.keyCode) === 'a') {
+                this.scenes[this.active_scene].lights[this.active_light].position.x -= 1;
+            } else if (String.fromCharCode(a.keyCode) === 'd') {
+                this.scenes[this.active_scene].lights[this.active_light].position.x += 1;
+            } else if (String.fromCharCode(a.keyCode) === 'f') {
+                this.scenes[this.active_scene].lights[this.active_light].position.y -= 1;
+            } else if (String.fromCharCode(a.keyCode) === 'r') {
+                this.scenes[this.active_scene].lights[this.active_light].position.y += 1;
+            } else if (String.fromCharCode(a.keyCode) === 'w') {
+                this.scenes[this.active_scene].lights[this.active_light].position.z -= 1;
+            } else if (String.fromCharCode(a.keyCode) === 's') {
+                this.scenes[this.active_scene].lights[this.active_light].position.z += 1;
+            }
+            //console.log(this.active_scene);
+            console.log(this.scenes[this.active_scene].lights[this.active_light].position);
+        });
     }
 
     createScene0(scene_idx) {
@@ -94,22 +112,22 @@ class Renderer {
         light1.specular = new Color3(1.0, 1.0, 1.0);
         current_scene.lights.push(light1);
 
-        window.addEventListener("keypress", a => {
-            if (String.fromCharCode(a.keyCode) === 'a') {
-                current_scene.lights[this.active_light].position.x -= 1;
-            } else if (String.fromCharCode(a.keyCode) === 'd') {
-                current_scene.lights[this.active_light].position.x += 1;
-            } else if (String.fromCharCode(a.keyCode) === 'f') {
-                current_scene.lights[this.active_light].position.y -= 1;
-            } else if (String.fromCharCode(a.keyCode) === 'r') {
-                current_scene.lights[this.active_light].position.y += 1;
-            } else if (String.fromCharCode(a.keyCode) === 'w') {
-                current_scene.lights[this.active_light].position.z -= 1;
-            } else if (String.fromCharCode(a.keyCode) === 's') {
-                current_scene.lights[this.active_light].position.z += 1;
-            }
-            console.log(current_scene.lights[this.active_light].position);
-        });
+        // window.addEventListener("keypress", a => {
+        //     if (String.fromCharCode(a.keyCode) === 'a') {
+        //         current_scene.lights[this.active_light].position.x -= 1;
+        //     } else if (String.fromCharCode(a.keyCode) === 'd') {
+        //         current_scene.lights[this.active_light].position.x += 1;
+        //     } else if (String.fromCharCode(a.keyCode) === 'f') {
+        //         current_scene.lights[this.active_light].position.y -= 1;
+        //     } else if (String.fromCharCode(a.keyCode) === 'r') {
+        //         current_scene.lights[this.active_light].position.y += 1;
+        //     } else if (String.fromCharCode(a.keyCode) === 'w') {
+        //         current_scene.lights[this.active_light].position.z -= 1;
+        //     } else if (String.fromCharCode(a.keyCode) === 's') {
+        //         current_scene.lights[this.active_light].position.z += 1;
+        //     }
+        //     console.log(current_scene.lights[this.active_light].position);
+        // });
 
         // Create ground mesh
         let white_texture = RawTexture.CreateRGBTexture(new Uint8Array([255, 255, 255]), 1, 1, scene);
@@ -204,45 +222,71 @@ class Renderer {
         }
         ground_mesh.material = materials['ground_' + this.shading_alg];
 
-        // Create a basic material to color models
-        let color_material = new ShaderMaterial('basic_color', scene, '/shaders/basic_color', {
-            attributes: ['position', 'color'],
-            uniforms: ['worldViewProjection']
-        });
-        color_material.backFaceCulling = false;
-
         //house
-
-        let triangle = new Mesh('triangle', scene);
+        let house = new Mesh('house', scene);
         let vertex_positions = [
-            0.000, 0.000, 0.000, 
-            2.000, 0.000, 0.000,
-            1.000, 2.000, -1.000,
-            2.000, 0.000, 0.000,
-            2.000, 0.000, -2.000,
-            1.000, 2.000, -1.000
+            0.000, 0.000, 0.000, //0
+            0.000, 0.000, -1.000, //1
+            1.000, 0.000, -1.000, //2
+            1.000, 0.000, 0.000, //3
+            0.000, 1.000, 0.000, //4
+            0.000, 1.000, -1.000, //5
+            1.000, 1.000, -1.000, //6
+            1.000, 1.000, 0.000, //7
+            0.500, 1.500, 0.000, //8
+            0.500, 1.500, -1.000, //9
+            0.650, 1.000, -0.200, //10 start of chimney, bottom points
+            0.650, 1.000, -0.400, //11
+            0.850, 1.000, -0.400, //12
+            0.850, 1.000, -0.200, //13 
+            0.650, 1.500, -0.200, //14 top points
+            0.650, 1.500, -0.400, //15
+            0.850, 1.500, -0.400, //16
+            0.850, 1.500, -0.200, //17
         ];
-        let triangle_indices = [
-            0, 1, 2,  
-            3, 4, 5            
+        let house_indices = [
+            0, 1, 2,
+            0, 2, 3, //bottom of house
+            0, 4, 5,
+            0, 5, 1, //left wall
+            1, 5, 6,
+            1, 6, 2, // back wall
+            2, 6, 7,
+            2, 7, 3, //right wall
+            0, 4, 7,
+            0, 7, 3, //front wall
+            4, 8, 7, //front roof
+            4, 8, 9,
+            4, 9, 5, //left roof
+            5, 9, 6, //back roof
+            6, 9, 8, 
+            6, 8, 7, //right root
+            10, 14, 15,
+            10, 15, 11,
+            15, 16, 12,
+            15, 12, 11, 
+            16, 17, 13, 
+            16, 13, 12,
+            17, 15, 10,
+            17, 10, 13
         ];
+
         let vertex_data = new VertexData();
         vertex_data.positions = vertex_positions;
-        vertex_data.indices = triangle_indices;
-        vertex_data.applyToMesh(triangle);
+        vertex_data.indices = house_indices;
+        vertex_data.applyToMesh(house);
 
         // Assign triangle a material and set its transforms
-        triangle.metadata = {
+        house.metadata = {
             mat_color: new Color3(0.75, 0.15, 0.05),
             mat_texture: white_texture,
             mat_specular: new Color3(0.4, 0.4, 0.4),
             mat_shininess: 4,
             texture_scale: new Vector2(1.0, 1.0)
         }
-        triangle.material = materials['illum_' + this.shading_alg];
-        triangle.scaling = new Vector3(4.0, 4.0, 4.0);
+        house.material = materials['illum_' + this.shading_alg];
         
-        current_scene.models.push(triangle);
+        current_scene.models.push(house);
     }
 
     createScene2(scene_idx) {
@@ -285,6 +329,88 @@ class Renderer {
             heightmap: ground_heightmap
         }
         ground_mesh.material = materials['ground_' + this.shading_alg];
+
+        let star = new Mesh('star', scene);
+        let vertex_positions = [
+            0.000, 1.000, 0.000, //0 back points
+            0.224, 0.309, 0.000, //1
+            -.224, 0.309, 0.000, //2 //
+            0.951, 0.309, 0.000, //3
+	        0.363, -0.117, 0.000, //4 //
+            0.588, -0.809, 0.000, //5
+	        0.000, -0.381, 0.000, //6 //
+	        -0.588, -0.809, 0.000, //7
+           -0.363, -0.118, 0.000, //8 //
+           -0.951, 0.309, 0.000, //9
+	        -0.224, 0.309, 0.000, //10
+            0.000, 1.000, 1.000, //11 top points
+            0.224, 0.309, 1.000, //12
+            -.224, 0.309, 1.000, //13 //
+            0.951, 0.309, 1.000, //14
+	        0.363, -0.117, 1.000, //15 //
+            0.588, -0.809, 1.000, //16
+	        0.000, -0.381, 1.000, //17 //
+	        -0.588, -0.809, 1.000, //18
+           -0.363, -0.118, 1.000, //19 //
+           -0.951, 0.309, 1.000, //20
+	        -0.224, 0.309, 1.000, //21
+        ];
+        let star_indices = [
+            0, 1, 2, // back top point
+            1, 3, 4, //top right point
+            4, 5, 6, //bottm right point
+            6, 7, 8, //bottom left point
+            8, 9, 10, //top left point
+            1, 4, 6,
+            1, 6, 2,
+            2, 6, 8, //fill middle
+            11, 12, 13, //front top point
+            12, 14, 15, //top right point
+            15, 16, 17, //bottm right point
+            17, 18, 19, //bottom left point
+            19, 20, 21, //top left point
+            12, 15, 17,
+            12, 17, 13,
+            13, 17, 19, //fill middle
+            0, 11, 12, 
+            0, 1, 12,
+            1, 3, 12,
+            12, 3, 4,
+            3, 4, 15,
+            3, 15, 14,
+            4, 15, 16,
+            4, 16, 5,
+            5, 6, 16,
+            6, 16, 17,
+            6, 18, 17,
+            6, 18, 7,
+            8, 7, 19,
+            19, 7, 18,
+            9, 20, 19,
+            9, 19, 8,
+            20, 2, 21,
+            20, 2, 9,
+            0, 11, 21,
+            0, 21, 10
+        ];
+
+        let vertex_data = new VertexData();
+        vertex_data.positions = vertex_positions;
+        vertex_data.indices = star_indices;
+        vertex_data.applyToMesh(star);
+
+        // Assign triangle a material and set its transforms
+        star.metadata = {
+            mat_color: new Color3(0.75, 0.15, 0.05),
+            mat_texture: white_texture,
+            mat_specular: new Color3(0.4, 0.4, 0.4),
+            mat_shininess: 4,
+            texture_scale: new Vector2(1.0, 1.0)
+        }
+        star.material = materials['illum_' + this.shading_alg];
+        
+        current_scene.models.push(star);
+
     }
 
     updateShaderUniforms(scene_idx, shader) {
