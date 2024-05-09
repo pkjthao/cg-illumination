@@ -45,11 +45,7 @@ void main() {
     // Pass diffuse and specular illumination onto the fragment shader
     vec3 newPosition = (world*vec4(position, 1.0)).xyz;
     vec3 N = normalize(model_normal);
-    vec3 L = normalize(light_positions[0] - newPosition);
-    vec3 R = normalize(2.0 * dot(N,L) * N-L);
-    vec3 V = normalize(camera_position);
-    diffuse_illum = vec3(light_colors[0] * max(dot(N, L), 0.0));
-    specular_illum = vec3(light_colors[0]  * pow(max(dot(R, V), 0.0), mat_shininess));
+
 
     // ---height displacement---
     float gray = texture(heightmap, model_uv).r;
@@ -66,6 +62,16 @@ void main() {
     vec3 tangent = neighbor1_pos - model_position;
     vec3 bitangent = neighbor2_pos - model_position;
     model_normal = normalize(cross(tangent, bitangent));
+
+
+
+    for (int i = 0; i < num_lights; i++) {
+        vec3 L = normalize(light_positions[i] - newPosition);
+        vec3 R = normalize(2.0 * dot(N,L) * N-L);
+        vec3 V = normalize(camera_position - newPosition);
+        diffuse_illum += vec3(light_colors[i] * max(dot(N, L), 0.0));
+        specular_illum += vec3(light_colors[i]  * pow(max(dot(R, V), 0.0), mat_shininess));
+    }
 
     // Transform and project vertex from 3D world-space to 2D screen-space
     gl_Position = projection * view * vec4(model_position, 1.0);

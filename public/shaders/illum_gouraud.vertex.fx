@@ -29,6 +29,7 @@ out vec3 specular_illum;
 void main() {
     // initialize the the world space location 
     vec3 newPosition = (world*vec4(position, 1.0)).xyz;
+    vec3 N = normalize(normal);
 
 
     // Model's normals are already computed through vec3 normal.
@@ -40,28 +41,19 @@ void main() {
     // Ambient Light, Diffuse Light            , and Specular Light
 
     // all are vector 3s
-    // what is N 
-    vec3 N = normalize(normal);
+    // what is N
 
-    // what is L
-    // from the object to the light source
-    vec3 L = normalize(light_positions[0] - newPosition);
+    for (int i = 0; i < num_lights; i++) {
 
-    // what is R
+        vec3 L = normalize(light_positions[i] - newPosition);
+        vec3 R = normalize(2.0 * dot(N,L) * N-L);
+        vec3 V = normalize(camera_position - newPosition);
+        
 
-    vec3 R = normalize(2.0 * dot(N,L) * N-L);
+        specular_illum += vec3(light_colors[i]  * pow(max(dot(R, V), 0.0), mat_shininess));
+        diffuse_illum += vec3(light_colors[i] * max(dot(N, L), 0.0));
 
-    // what is V
-    // when calculating the direction for any vector, you must subtract the distance from
-    // the object to the desired vector
-
-    vec3 V = normalize(camera_position);
-
-    // max sets the value to 0 if the dot product is negative
-    // Pass diffuse and specular illumination onto the fragment shader
-    diffuse_illum = vec3(light_colors[0] * max(dot(N, L), 0.0));
-    // change the 0 to the index of the light source to loop over all of the light sources in the scene
-    specular_illum = vec3(light_colors[0]  * pow(max(dot(R, V), 0.0), mat_shininess));
+    }
 
     // Pass vertex texcoord onto the fragment shader
     model_uv = uv;

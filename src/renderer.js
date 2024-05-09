@@ -89,9 +89,10 @@ class Renderer {
         light0.specular = new Color3(1.0, 1.0, 1.0);
         current_scene.lights.push(light0);
 
+        // light1 has half diffuse and specular intensity
         let light1 = new PointLight('light1', new Vector3(0.0, 3.0, 0.0), scene);
-        light1.diffuse = new Color3(1.0, 1.0, 1.0);
-        light1.specular = new Color3(1.0, 1.0, 1.0);
+        light1.diffuse = new Color3(0.5, 0.5, 0.5);
+        light1.specular = new Color3(0.5, 0.5, 0.5);
         current_scene.lights.push(light1);
 
         window.addEventListener("keypress", a => {
@@ -189,19 +190,44 @@ class Renderer {
         light0.specular = new Color3(1.0, 1.0, 1.0);
         current_scene.lights.push(light0);
 
+        // light 1 
+        let light1 = new PointLight('light1', new Vector3(1.0, 1.0, 5.0), scene);
+        light1.diffuse = new Color3(0.5, 0.5, 0.5);
+        light1.specular = new Color3(0.5, 0.5, 0.5);
+        current_scene.lights.push(light1);
+
+        window.addEventListener("keypress", a => {
+            if (String.fromCharCode(a.keyCode) === 'a') {
+                current_scene.lights[this.active_light].position.x -= 1;
+            } else if (String.fromCharCode(a.keyCode) === 'd') {
+                current_scene.lights[this.active_light].position.x += 1;
+            } else if (String.fromCharCode(a.keyCode) === 'f') {
+                current_scene.lights[this.active_light].position.y -= 1;
+            } else if (String.fromCharCode(a.keyCode) === 'r') {
+                current_scene.lights[this.active_light].position.y += 1;
+            } else if (String.fromCharCode(a.keyCode) === 'w') {
+                current_scene.lights[this.active_light].position.z -= 1;
+            } else if (String.fromCharCode(a.keyCode) === 's') {
+                current_scene.lights[this.active_light].position.z += 1;
+            }
+            console.log(current_scene.lights[this.active_light].position);
+        });
+
         // Create ground mesh
-        let white_texture = RawTexture.CreateRGBTexture(new Uint8Array([255, 255, 255]), 1, 1, scene);
-        let ground_heightmap = new Texture(BASE_URL + 'heightmaps/default.png', scene);
-        ground_mesh.scaling = new Vector3(20.0, 1.0, 20.0);
+        let rocky_texture = new Texture(BASE_URL + 'texturemaps/canyon_rgb.jpg', scene);
+        let ground_heightmap = new Texture(BASE_URL + 'heightmaps/canyon_elev.jpg', scene);
+        ground_mesh.scaling = new Vector3(30.0, 1.0, 15.0);
         ground_mesh.metadata = {
-            mat_color: new Color3(0.10, 0.50, 0.00),
-            mat_texture: white_texture,
-            mat_specular: new Color3(0.0, 0.0, 0.0),
-            mat_shininess: 1,
+            mat_color: new Color3(1.0, 1.0, 1.0),
+            mat_texture: rocky_texture,
+            mat_specular: new Color3(0.20, 0.20, 0.20),
+            mat_shininess: 4,
             texture_scale: new Vector2(1.0, 1.0),
             height_scalar: 1.0,
             heightmap: ground_heightmap
         }
+
+        
         ground_mesh.material = materials['ground_' + this.shading_alg];
 
         // Create a basic material to color models
@@ -212,6 +238,7 @@ class Renderer {
         color_material.backFaceCulling = false;
 
         //house
+        let white_texture = RawTexture.CreateRGBTexture(new Uint8Array([255, 255, 255]), 1, 1, scene);
 
         let triangle = new Mesh('triangle', scene);
         let vertex_positions = [
@@ -226,9 +253,18 @@ class Renderer {
             0, 1, 2,  
             3, 4, 5            
         ];
+        let vertex_normals = [
+            0.0, 0.0, 1.0,
+            0.0, 0.0, 1.0,
+            0.0, 0.0, 1.0,
+            0.0, 0.0, -1.0,
+            0.0, 0.0, -1.0,
+            0.0, 0.0, -1.0
+        ];
         let vertex_data = new VertexData();
         vertex_data.positions = vertex_positions;
         vertex_data.indices = triangle_indices;
+        vertex_data.normals = vertex_normals;
         vertex_data.applyToMesh(triangle);
 
         // Assign triangle a material and set its transforms
@@ -243,6 +279,16 @@ class Renderer {
         triangle.scaling = new Vector3(4.0, 4.0, 4.0);
         
         current_scene.models.push(triangle);
+
+        // Animation function - called before each frame gets rendered
+        scene.onBeforeRenderObservable.add(() => {
+            // update models and lights here (if needed)
+            // ...
+
+            // update uniforms in shader programs
+            this.updateShaderUniforms(scene_idx, materials['illum_' + this.shading_alg]);
+            this.updateShaderUniforms(scene_idx, materials['ground_' + this.shading_alg]);
+        });
     }
 
     createScene2(scene_idx) {

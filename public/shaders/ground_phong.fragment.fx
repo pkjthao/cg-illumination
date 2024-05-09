@@ -35,9 +35,9 @@ void main() {
         vec3 I_diffuse = light_colors[i] * mat_color * dot(normalized_surface_normal, normalized_light_direction);
 
         // specular lighting intensity
-        vec3 normalized_reflected_light_direction = normalize(2.0 * dot(normalized_surface_normal, normalized_light_direction) * normalized_surface_normal - normalized_light_direction);
+        vec3 normalized_reflected_light_direction = normalize(2.0 * max(dot(normalized_surface_normal, normalized_light_direction), 0.0) * normalized_surface_normal - normalized_light_direction);
         vec3 normalized_view_direction = normalize(camera_position - model_position);
-        vec3 I_specular = light_colors[i] * mat_specular * pow(dot(normalized_reflected_light_direction, normalized_view_direction), mat_shininess);
+        vec3 I_specular = light_colors[i] * mat_specular * pow(max(dot(normalized_reflected_light_direction, normalized_view_direction), 0.0), mat_shininess);
         
         // combined
         vec3 combined = I_ambient + I_diffuse + I_specular;
