@@ -47,7 +47,7 @@ void main() {
 
     vec3 tangent = neighbor1_pos - model_position;
     vec3 bitangent = neighbor2_pos - model_position;
-    model_normal = noramlize(cross(tangent, bitangent));
+    model_normal = normalize(cross(tangent, bitangent));
 
     // Transform and project vertex from 3D world-space to 2D screen-space
     gl_Position = projection * view * vec4(model_position, 1.0);

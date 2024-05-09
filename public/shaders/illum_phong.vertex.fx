@@ -22,9 +22,11 @@ out vec2 model_uv;
 void main() {
     // Pass vertex position onto the fragment shader
     model_position = vec3(world * vec4(position, 1.0));
+
     // Pass vertex normal onto the fragment shader
-    mat3 matNormalTransform = inverse(transpose(mat3 world));
+    mat3 matNormalTransform = inverse(transpose(mat3(world)));
     model_normal = matNormalTransform * normal;
+
     // Pass vertex texcoord onto the fragment shader
     model_uv = uv;
 
