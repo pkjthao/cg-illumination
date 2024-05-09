@@ -33,40 +33,40 @@ out vec3 specular_illum;
 
 void main() {
     // Get initial position of vertex (prior to height displacement)
-    // vec4 world_pos = world * vec4(position, 1.0);
+    vec4 world_pos = world * vec4(position, 1.0);
 
-    // height displacement steps:
-    // This process involves modifying individual vertices' y-coordinate.
-    // This process is useful for taking a standard plane and shifting each
-    // vertex up/down some amount, thus creating uneven surface (often used for
-    // terrain creation). You will use a grayscale texture as our heightmap
-    // that will control the vertex displace as follows:
-    // d = 2.0 ⋅ scale ⋅ (gray - 0.5)
-    // This effectively will do the following:
-    // - Black: shift vertex down in the y direction "scale" units
-    // - 50% Gray: vertex remains unchanged
-    // - White: shift vertex up in the y direction "scale" units
-    // One challenge with modifying the vertices of a model is that
-    // it can mess with the normal vector directions. To compute the
-    // normal vector for a vertex when doing height displacement, you
-    // need to determine where 2 "nerby" vertices will be located. This
-    // can be done by sampling the heightmap texture using slightly
-    // different UV coordinates (neighbor 1 - slightly right;
-    // neighbor 2 - slightly above). Once you know the positions
-    // of the 2 nearby points, you use the following equations
-    // to calculate the normal vector:
-    // - tangent = neighbor1_pos - position
-    // - bitangent = neighbor2_pos - position
-    // - normal = normalize(tangent X bitangent)
-
-
-    // Pass diffuse and specular illumination onto the fragment shader
-    diffuse_illum = vec3(0.0, 0.0, 0.0);
-    specular_illum = vec3(0.0, 0.0, 0.0);
-
+    // Pass vertex position onto the fragment shader
+    vec3 model_position = world_pos.xyz;
+    // Pass vertex normal onto the fragment shader
+    vec3 model_normal = vec3(0.0, 1.0, 0.0);
     // Pass vertex texcoord onto the fragment shader
     model_uv = uv;
 
+    // Pass diffuse and specular illumination onto the fragment shader
+    vec3 newPosition = (world*vec4(position, 1.0)).xyz;
+    vec3 N = normalize(model_normal);
+    vec3 L = normalize(light_positions[0] - newPosition);
+    vec3 R = normalize(2.0 * dot(N,L) * N-L);
+    vec3 V = normalize(camera_position);
+    diffuse_illum = vec3(light_colors[0] * max(dot(N, L), 0.0));
+    specular_illum = vec3(light_colors[0]  * pow(max(dot(R, V), 0.0), mat_shininess));
+
+    // ---height displacement---
+    float gray = texture(heightmap, model_uv).r;
+    model_position.y += 2.0 * height_scalar * (gray - 0.5);
+    // uv for 2 nearby points
+    float increment = 0.1;
+    vec2 neighbor1_uv = vec2(model_uv.x + increment, model_uv.y); // slightly to the right (little increment in u)
+    vec2 neighbor2_uv = vec2(model_uv.x, model_uv.y + increment); // slightly above (little increment in v)
+    // pos for 2 nearby points
+    vec3 neighbor1_pos = vec3(model_position.x + ground_size.x * increment, model_position.y, model_position.z);
+    vec3 neighbor2_pos = vec3(model_position.x, model_position.y + ground_size.y * increment, model_position.z);
+    //
+
+    vec3 tangent = neighbor1_pos - model_position;
+    vec3 bitangent = neighbor2_pos - model_position;
+    model_normal = normalize(cross(tangent, bitangent));
+
     // Transform and project vertex from 3D world-space to 2D screen-space
-    gl_Position = projection * view * world_pos;
+    gl_Position = projection * view * vec4(model_position, 1.0);
 }
