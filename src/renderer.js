@@ -113,22 +113,35 @@ class Renderer {
         light1.specular = new Color3(0.5, 0.5, 0.5);
         current_scene.lights.push(light1);
 
-        // window.addEventListener("keypress", a => {
-        //     if (String.fromCharCode(a.keyCode) === 'a') {
-        //         current_scene.lights[this.active_light].position.x -= 1;
-        //     } else if (String.fromCharCode(a.keyCode) === 'd') {
-        //         current_scene.lights[this.active_light].position.x += 1;
-        //     } else if (String.fromCharCode(a.keyCode) === 'f') {
-        //         current_scene.lights[this.active_light].position.y -= 1;
-        //     } else if (String.fromCharCode(a.keyCode) === 'r') {
-        //         current_scene.lights[this.active_light].position.y += 1;
-        //     } else if (String.fromCharCode(a.keyCode) === 'w') {
-        //         current_scene.lights[this.active_light].position.z -= 1;
-        //     } else if (String.fromCharCode(a.keyCode) === 's') {
-        //         current_scene.lights[this.active_light].position.z += 1;
-        //     }
-        //     console.log(current_scene.lights[this.active_light].position);
-        // });
+        // light2 has half diffuse and specular intensity
+        let light2 = new PointLight('light1', new Vector3(0.0, 3.0, 0.0), scene);
+        light2.diffuse = new Color3(0.5, 0.5, 0.5);
+        light2.specular = new Color3(0.5, 0.5, 0.5);
+        current_scene.lights.push(light2);
+
+        // light3 has half diffuse and specular intensity
+        let light3 = new PointLight('light1', new Vector3(0.0, 3.0, 0.0), scene);
+        light3.diffuse = new Color3(0.5, 0.5, 0.5);
+        light3.specular = new Color3(0.5, 0.5, 0.5);
+        current_scene.lights.push(light3);
+
+        // light4 has half diffuse and specular intensity
+        let light4 = new PointLight('light1', new Vector3(0.0, 3.0, 0.0), scene);
+        light4.diffuse = new Color3(0.5, 0.5, 0.5);
+        light4.specular = new Color3(0.5, 0.5, 0.5);
+        current_scene.lights.push(light4);
+
+        // light5 has half diffuse and specular intensity
+        let light5 = new PointLight('light1', new Vector3(0.0, 3.0, 0.0), scene);
+        light5.diffuse = new Color3(0.5, 0.5, 0.5);
+        light5.specular = new Color3(0.5, 0.5, 0.5);
+        current_scene.lights.push(light5);
+
+        // light6 has half diffuse and specular intensity
+        let light6 = new PointLight('light1', new Vector3(0.0, 3.0, 0.0), scene);
+        light6.diffuse = new Color3(0.5, 0.5, 0.5);
+        light6.specular = new Color3(0.5, 0.5, 0.5);
+        current_scene.lights.push(light6);
 
         // Create ground mesh
         let white_texture = RawTexture.CreateRGBTexture(new Uint8Array([255, 255, 255]), 1, 1, scene);
@@ -203,6 +216,7 @@ class Renderer {
         current_scene.camera.maxZ = 100.0;
 
         // Create point light sources
+        //light 0
         let light0 = new PointLight('light0', new Vector3(1.0, 1.0, 5.0), scene);
         light0.diffuse = new Color3(1.0, 1.0, 1.0);
         light0.specular = new Color3(1.0, 1.0, 1.0);
@@ -213,6 +227,18 @@ class Renderer {
         light1.diffuse = new Color3(0.5, 0.5, 0.5);
         light1.specular = new Color3(0.5, 0.5, 0.5);
         current_scene.lights.push(light1);
+
+        // light 2
+        let light2 = new PointLight('light1', new Vector3(0.0, 3.0, 0.0), scene);
+        light2.diffuse = new Color3(0.5, 0.5, 0.5);
+        light2.specular = new Color3(0.5, 0.5, 0.5);
+        current_scene.lights.push(light2);
+
+        // light 3
+        let light3 = new PointLight('light1', new Vector3(0.0, 3.0, 0.0), scene);
+        light3.diffuse = new Color3(0.5, 0.5, 0.5);
+        light3.specular = new Color3(0.5, 0.5, 0.5);
+        current_scene.lights.push(light3);
 
         window.addEventListener("keypress", a => {
             if (String.fromCharCode(a.keyCode) === 'a') {
@@ -232,6 +258,7 @@ class Renderer {
         });
 
         // Create ground mesh
+        let white_texture = RawTexture.CreateRGBTexture(new Uint8Array([255, 255, 255]), 1, 1, scene);
         let rocky_texture = new Texture(BASE_URL + 'texturemaps/canyon_rgb.jpg', scene);
         let ground_heightmap = new Texture(BASE_URL + 'heightmaps/canyon_elev.jpg', scene);
         ground_mesh.scaling = new Vector3(30.0, 1.0, 15.0);
@@ -355,10 +382,17 @@ class Renderer {
         current_scene.camera.maxZ = 100.0;
 
         // Create point light sources
+        //light 0
         let light0 = new PointLight('light0', new Vector3(1.0, 1.0, 5.0), scene);
         light0.diffuse = new Color3(1.0, 1.0, 1.0);
         light0.specular = new Color3(1.0, 1.0, 1.0);
         current_scene.lights.push(light0);
+
+        // light 1 
+        let light1 = new PointLight('light1', new Vector3(0.0, 3.0, 0.0), scene);
+        light1.diffuse = new Color3(0.5, 0.5, 0.5);
+        light1.specular = new Color3(0.5, 0.5, 0.5);
+        current_scene.lights.push(light1);
 
         // Create ground mesh
         let white_texture = RawTexture.CreateRGBTexture(new Uint8Array([255, 255, 255]), 1, 1, scene);
@@ -455,6 +489,16 @@ class Renderer {
         star.material = materials['illum_' + this.shading_alg];
         
         current_scene.models.push(star);
+
+        // Animation function - called before each frame gets rendered
+        scene.onBeforeRenderObservable.add(() => {
+            // update models and lights here (if needed)
+            // ...
+
+            // update uniforms in shader programs
+            this.updateShaderUniforms(scene_idx, materials['illum_' + this.shading_alg]);
+            this.updateShaderUniforms(scene_idx, materials['ground_' + this.shading_alg]);
+        });
 
     }
 
