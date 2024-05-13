@@ -145,12 +145,15 @@ class Renderer {
 
         // Create ground mesh
         let white_texture = RawTexture.CreateRGBTexture(new Uint8Array([255, 255, 255]), 1, 1, scene);
-        let ground_heightmap = new Texture(BASE_URL + 'heightmaps/default.png', scene);
-        ground_mesh.scaling = new Vector3(20.0, 1.0, 20.0);
+        let worldmap_texture = new Texture(BASE_URL + 'texturemaps/worldmap_texture.jpg', scene);
+        let globe_texture = new Texture(BASE_URL + 'texturemaps/globe_texture.jpg', scene);
+        let authagraphmap_texture = new Texture(BASE_URL + 'texturemaps/authagraphmap_texture.jpg', scene);
+        let ground_heightmap = new Texture(BASE_URL + 'heightmaps/world_elev.jpg', scene);
+        ground_mesh.scaling = new Vector3(30.0, 1.0, 15.0);
         ground_mesh.metadata = {
-            mat_color: new Color3(0.10, 0.65, 0.15),
-            mat_texture: white_texture,
-            mat_specular: new Color3(0.0, 0.0, 0.0),
+            mat_color: new Color3(1.0, 1.0, 1.0),
+            mat_texture: worldmap_texture,
+            mat_specular: new Color3(0.1, 0.4, 0.4),
             mat_shininess: 1,
             texture_scale: new Vector2(1.0, 1.0),
             height_scalar: 1.0,
@@ -162,8 +165,8 @@ class Renderer {
         let sphere = CreateSphere('sphere', {segments: 32}, scene);
         sphere.position = new Vector3(1.0, 0.5, 3.0);
         sphere.metadata = {
-            mat_color: new Color3(0.10, 0.35, 0.88),
-            mat_texture: white_texture,
+            mat_color: new Color3(0.20, 0.55, 0.75),
+            mat_texture: globe_texture,
             mat_specular: new Color3(0.8, 0.8, 0.8),
             mat_shininess: 16,
             texture_scale: new Vector2(1.0, 1.0)
@@ -174,8 +177,8 @@ class Renderer {
         let box = CreateBox('box', {width: 2, height: 1, depth: 1}, scene);
         box.position = new Vector3(-1.0, 0.5, 2.0);
         box.metadata = {
-            mat_color: new Color3(0.75, 0.15, 0.05),
-            mat_texture: white_texture,
+            mat_color: new Color3(1.0, 1.0, 1.0),
+            mat_texture: authagraphmap_texture,
             mat_specular: new Color3(0.4, 0.4, 0.4),
             mat_shininess: 4,
             texture_scale: new Vector2(1.0, 1.0)
@@ -244,7 +247,7 @@ class Renderer {
         let white_texture = RawTexture.CreateRGBTexture(new Uint8Array([255, 255, 255]), 1, 1, scene);
         let rocky_texture = new Texture(BASE_URL + 'texturemaps/canyon_rgb.jpg', scene);
         let ground_heightmap = new Texture(BASE_URL + 'heightmaps/canyon_elev.jpg', scene);
-        let brick_texture = new Texture(BASE_URL + 'texturemaps/brick_wall.jpg', scene); 
+        let brick_texture = new Texture(BASE_URL + 'texturemaps/brick_wall.jpg', scene);
         ground_mesh.scaling = new Vector3(30.0, 1.0, 15.0);
         ground_mesh.metadata = {
             mat_color: new Color3(1.0, 1.0, 1.0),
@@ -428,7 +431,7 @@ class Renderer {
         // Assign triangle a material and set its transforms
         roof.metadata = {
             mat_color: new Color3(0.75, 0.15, 0.05),
-            mat_texture: white_texture,
+            mat_texture: brick_texture,
             mat_specular: new Color3(0.4, 0.4, 0.4),
             mat_shininess: 4,
             texture_scale: new Vector2(1.0, 1.0)
@@ -490,13 +493,14 @@ class Renderer {
 
         // Create ground mesh
         let white_texture = RawTexture.CreateRGBTexture(new Uint8Array([255, 255, 255]), 1, 1, scene);
-        let ground_heightmap = new Texture(BASE_URL + 'heightmaps/default.png', scene);
+        let mars_texture = new Texture(BASE_URL + '/texturemaps/Mars_Texture.png', scene);
+        let ground_heightmap = new Texture(BASE_URL + '/heightmaps/Mars_HeightMap.png', scene);
         ground_mesh.scaling = new Vector3(20.0, 1.0, 20.0);
         ground_mesh.metadata = {
-            mat_color: new Color3(0.10, 0.65, 0.15),
-            mat_texture: white_texture,
-            mat_specular: new Color3(0.0, 0.0, 0.0),
-            mat_shininess: 1,
+            mat_color: new Color3(1.0, 1.0, 1.0),
+            mat_texture: mars_texture,
+            mat_specular: new Color3(0.50, 0.50, 0.50),
+            mat_shininess: 8,
             texture_scale: new Vector2(1.0, 1.0),
             height_scalar: 1.0,
             heightmap: ground_heightmap
