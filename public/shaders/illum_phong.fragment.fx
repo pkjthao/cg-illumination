@@ -24,8 +24,8 @@ uniform vec3 light_colors[8]; // Ip
 out vec4 FragColor;
 
 void main() {
-    // take lines of codes out the loop that don't need loop
-    vec3 I_ambient = ambient * mat_color;
+    vec3 model_color = mat_color * texture(mat_texture, model_uv).rgb;
+    vec3 I_ambient = ambient * model_color;
     vec3 I_diffuse = vec3(0.0);
     vec3 I_specular = vec3(0.0);
 
@@ -34,7 +34,7 @@ void main() {
         // diffuse lighting intensity
         vec3 normalized_surface_normal = normalize(model_normal);
         vec3 normalized_light_direction = normalize(light_positions[i] - model_position);
-        I_diffuse += light_colors[i] * mat_color * dot(normalized_surface_normal, normalized_light_direction);
+        I_diffuse += light_colors[i] * model_color * dot(normalized_surface_normal, normalized_light_direction);
 
         // specular lighting intensity
         vec3 normalized_reflected_light_direction = normalize(2.0 * max(dot(normalized_surface_normal, normalized_light_direction), 0.0) * normalized_surface_normal - normalized_light_direction);
@@ -43,9 +43,10 @@ void main() {
         
         
     }
+    
     // combined
-        vec3 combined = I_ambient + I_diffuse + I_specular;
+    vec3 combined = I_ambient + I_diffuse + I_specular;
 
-        // Color
-        FragColor = vec4(combined, 1.0);
+    // Color
+    FragColor = min(vec4(1.0, 1.0, 1.0, 1.0), vec4(combined, 1.0));
 }
