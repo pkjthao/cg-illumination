@@ -26,13 +26,15 @@ out vec4 FragColor;
 void main() {
     // take lines of codes out the loop that don't need loop
     for (int i=0; i<num_lights; i++) {
+        vec3 model_color = mat_color * texture(mat_texture, model_uv).rgb;
+
         // ambient lighting intensity
-        vec3 I_ambient = ambient * mat_color;
+        vec3 I_ambient = ambient * model_color;
 
         // diffuse lighting intensity
         vec3 normalized_surface_normal = normalize(model_normal);
         vec3 normalized_light_direction = normalize(light_positions[i] - model_position);
-        vec3 I_diffuse = light_colors[i] * mat_color * dot(normalized_surface_normal, normalized_light_direction);
+        vec3 I_diffuse = light_colors[i] * model_color * dot(normalized_surface_normal, normalized_light_direction);
 
         // specular lighting intensity
         vec3 normalized_reflected_light_direction = normalize(2.0 * max(dot(normalized_surface_normal, normalized_light_direction), 0.0) * normalized_surface_normal - normalized_light_direction);
@@ -43,6 +45,6 @@ void main() {
         vec3 combined = I_ambient + I_diffuse + I_specular;
 
         // Color
-        FragColor = vec4(combined, 1.0);
+        FragColor = min(vec4(1.0, 1.0, 1.0, 1.0), vec4(combined, 1.0));
     }
 }
